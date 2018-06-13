@@ -1,0 +1,27 @@
+{{/* a comment */}}
+
+Literals: {{123}}, {{'a'}}, {{printf "%c" '\u00FF'}}, {{print null}}
+
+String: {{"hello world"}}
+
+Raw string: {{` hello
+world `}}
+
+Dot: {{.}}
+
+Pipeline: {{"upper case" | upper}}
+
+Variable: {{$n = .chars.length}}{{$s = index .strings 0}}{{$n}}
+
+Foreach: {{for range 10}}{{.}} {{end}}
+
+If-else: {{if .chars}}{{.chars}}{{else}}empty{{end}}
+
+Foreach with break and continue: {{for range 10}}{{if mod . 2 | eq 0}}{{continue}}{{else if eq . 5}}{{break}}{{end}}{{.}} {{end}}
+
+If-else-if: {{if eq $s "str"}}{{$s}} == str{{else if $s.startsWith "str"}}{{$s}} != str{{end}}
+
+With: {{with "dot with new value"}}{{.}}{{else}}empty{{end}}
+
+{{define "concat"}}{{for .strings}}{{print .}}{{end}}{{end}}
+Template: concat={{template "concat" .}}
