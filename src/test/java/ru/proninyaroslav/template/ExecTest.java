@@ -182,8 +182,16 @@ public class ExecTest
 		tests.add(new TestExec("$ int", "{{$}}", "123", 123, false));
 		tests.add(new TestExec("$.i", "{{$.i}}", "123", t, false));
 		tests.add(new TestExec("$.u.v", "{{$.u.v}}", "v", t, false));
-		tests.add(new TestExec("declare in action", "{{$x = $.u.v}}{{$x}}",
+		tests.add(new TestExec("declare in action", "{{$x := $.u.v}}{{$x}}",
 				       "v", t, false));
+		tests.add(new TestExec("simple assignment", "{{$x := 2}}{{$x = 3}}{{$x}}",
+				       "3", t, false));
+		tests.add(new TestExec("nested assignment",
+				       "{{$x := 2}}{{if true}}{{$x = 3}}{{end}}{{$x}}",
+				       "3", t, false));
+		tests.add(new TestExec("nested assignment changes the last declaration",
+				       "{{$x := 1}}{{if true}}{{$x := 2}}{{if true}}{{$x = 3}}{{end}}{{end}}{{$x}}",
+				       "1", t, false));
 		tests.add(new TestExec("v.toString()", "{{.v}}", t.v.toString(),
 				       t, false));
 		tests.add(new TestExec(".meth0", "{{.meth0}}", t.meth0(),
@@ -198,7 +206,7 @@ public class ExecTest
 				       t.meth2(1, "test"), t, false));
 		tests.add(new TestExec(".meth3 null", "{{.meth3 null}}",
 				       t.meth3(null), t, false));
-		tests.add(new TestExec("method on var", "{{if $x = .}}{{$x.meth2 1 $x.x}}{{end}}",
+		tests.add(new TestExec("method on var", "{{if $x := .}}{{$x.meth2 1 $x.x}}{{end}}",
 				       t.meth2(1, t.x), t, false));
 		tests.add(new TestExec("exec template", "{{execTemplate .}}",
 				       "test template", t, false));
@@ -249,10 +257,10 @@ public class ExecTest
 				       "{{if `test`}}NON EMPTY{{else}}EMPTY{{end}}",
 				       "NON EMPTY", null, false));
 		tests.add(new TestExec("if $x with $y int",
-				       "{{if $x = true}}{{with $y = .i}}{{$x}},{{$y}}{{end}}{{end}}",
+				       "{{if $x := true}}{{with $y := .i}}{{$x}},{{$y}}{{end}}{{end}}",
 				       "true,123", t, false));
 		tests.add(new TestExec("if $x with $x int",
-				       "{{if $x = true}}{{with $x = .i}}{{$x}},{{end}}{{$x}}{{end}}",
+				       "{{if $x := true}}{{with $x := .i}}{{$x}},{{end}}{{$x}}{{end}}",
 				       "123,true", t, false));
 		tests.add(new TestExec("if else if",
 				       "{{if false}}FALSE{{else if true}}TRUE{{end}}",
@@ -291,13 +299,13 @@ public class ExecTest
 				       "{{with .iArr}}{{.}}{{else}}NULL{{end}}",
 				       "[1, 2, 3]", t, false));
 		tests.add(new TestExec("with $x int",
-				       "{{with $x = .i}}{{$x}}{{end}}", "123",
+				       "{{with $x := .i}}{{$x}}{{end}}", "123",
 				       t, false));
 		tests.add(new TestExec("with $x .u.v",
-				       "{{with $x = $}}{{$x.u.v}}{{end}}", "v",
+				       "{{with $x := $}}{{$x.u.v}}{{end}}", "v",
 				       t, false));
 		tests.add(new TestExec("with variable and action",
-				       "{{with $x = $}}{{$y = $.u.v}}{{$y}}{{end}}",
+				       "{{with $x := $}}{{$y := $.u.v}}{{$y}}{{end}}",
 				       "v", t, false));
 		tests.add(new TestExec("for int[]",
 				       "{{for .iArr}}-{{.}}-{{end}}",
@@ -318,10 +326,10 @@ public class ExecTest
 				       "{{for range 3}}-{{.}}-{{end}}",
 				       "-0--1--2-", null, false));
 		tests.add(new TestExec("for $x iArr",
-				       "{{for $x = .iArr}}<{{$x}}>{{end}}",
+				       "{{for $x := .iArr}}<{{$x}}>{{end}}",
 				       "<1><2><3>", t, false));
 		tests.add(new TestExec("declare in for",
-				       "{{for $x = .iArr}}<{{$foo = $x}}{{$x}}>{{end}}",
+				       "{{for $x := .iArr}}<{{$foo := $x}}{{$x}}>{{end}}",
 				       "<1><2><3>", t, false));
 		tests.add(new TestExec("for quick break",
 				       "{{for .iArr}}{{break}}{{.}}{{end}}",
@@ -342,10 +350,10 @@ public class ExecTest
 				       null, true));
 		tests.add(new TestExec("arguments without function", "{{1 2}}",
 				       "", null, true));
-		tests.add(new TestExec("number var as function", "{{$x = 1}}{{$x 2}}",
+		tests.add(new TestExec("number var as function", "{{$x := 1}}{{$x 2}}",
 				       "", null, true));
 		tests.add(new TestExec("number var as function with pipeline",
-			               "{{$x = 1}}{{2 | $x}}", "", null, true));
+			               "{{$x := 1}}{{2 | $x}}", "", null, true));
 		tests.add(new TestExec("binaryFuncTooFew", "{{binaryFunc `1`}}",
 				       "", null, true));
 		tests.add(new TestExec("binaryFuncTooMany", "{{binaryFunc `1` `2` `3`}}",

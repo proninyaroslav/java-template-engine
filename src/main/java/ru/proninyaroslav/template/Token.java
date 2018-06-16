@@ -29,7 +29,8 @@ class Token
 		SPACE,              /* spaces for separating arguments */
 		STRING,             /* quoted string (includes quotes) */
 		RAW_STRING,         /* raw quoted string with newlines (includes quotes) */
-		EQUALS,             /* equals ('=') introducing a declaration */
+		DECLARE,	    /* colon-equals (':=') introducing a declaration */
+		ASSIGN,		    /* equals ('=') introducing an assignment */
 		EOF,
 		FIELD,              /* alphanumeric identifier starting with '.' */
 		IDENTIFIER,         /* alphanumeric identifier not starting with '.' */

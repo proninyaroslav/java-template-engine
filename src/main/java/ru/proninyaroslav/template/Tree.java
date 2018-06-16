@@ -302,7 +302,7 @@ public class Tree
 	 */
 	private Node useVar(int pos, String name) throws ParseException
 	{
-		Node.Variable var = newVariable(pos, name);
+		Node.Assign var = newVariable(pos, name);
 		for (String varName : vars)
 			if (var.ident.get(0).equals(varName))
 				return var;
@@ -449,7 +449,8 @@ public class Tree
 	 */
 	private Node.Pipe pipeline(String context) throws ParseException, InternalException
 	{
-		ArrayList<Node.Variable> decl = new ArrayList<>();
+		ArrayList<Node.Assign> vars = new ArrayList<>();
+		boolean decl = false;
 		int pos = peekNonSpace().pos;
 		Token v = peekNonSpace();
 		if (v.type == Token.Type.VARIABLE) {
@@ -461,10 +462,11 @@ public class Tree
 			 */
 			Token tokenAfterVariable = peek();
 			Token next = peekNonSpace();
-			if (next.type == Token.Type.EQUALS) {
+			if (next.type == Token.Type.ASSIGN || next.type == Token.Type.DECLARE) {
 				nextNonSpace();
-				decl.add(newVariable(v.pos, v.val));
-				vars.add(v.val);
+				vars.add(newVariable(v.pos, v.val));
+				this.vars.add(v.val);
+				decl = next.type == Token.Type.DECLARE;
 			} else if (tokenAfterVariable.type == Token.Type.SPACE) {
 				backupThree(v, tokenAfterVariable);
 			} else {
@@ -472,7 +474,8 @@ public class Tree
 			}
 		}
 
-		Node.Pipe pipe = newPipeline(pos, decl);
+		Node.Pipe pipe = newPipeline(pos, vars);
+		pipe.decl = decl;
 		for (;;) {
 			Token token = nextNonSpace();
 			switch (token.type) {
@@ -838,14 +841,14 @@ public class Tree
 		return new Node.Text(this, pos, text);
 	}
 
-	Node.Pipe newPipeline(int pos, List<Node.Variable> decl)
+	Node.Pipe newPipeline(int pos, List<Node.Assign> decl)
 	{
 		return new Node.Pipe(this, pos, decl);
 	}
 
-	Node.Variable newVariable(int pos, String ident)
+	Node.Assign newVariable(int pos, String ident)
 	{
-		return new Node.Variable(this, pos, Arrays.asList(ident.split("\\.")));
+		return new Node.Assign(this, pos, Arrays.asList(ident.split("\\.")));
 	}
 
 	Node.Command newCommand(int pos)

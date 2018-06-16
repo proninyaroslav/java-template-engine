@@ -99,12 +99,30 @@ class Exec
 		return vars.size();
 	}
 
+
 	/**
-	 * Overwrites the top-nth variable on the stack
+	 * Overwrites the top-nth variable on the stack.
+	 * Used by range iterations
 	 */
-	private void setVar(int n, Object value)
+	private void setTopVar(int n, Object value)
 	{
 		vars.get(vars.size() - n).value = value;
+	}
+
+	/**
+	 * Overwrites the last declared variable with the given name.
+	 * Used by variable assignments
+	 */
+	private void setVar(String name, Object value) throws ExecException
+	{
+		for (int i = stackSize() - 1; i >= 0; i--) {
+			if (vars.get(i).name.equals(name)) {
+				vars.get(i).value = value;
+				return;
+			}
+		}
+
+		errorf("undefined variable: %s", name);
 	}
 
 	private Object varValue(String name) throws ExecException
@@ -168,7 +186,7 @@ class Exec
 			/* If the action declares variables, don't print the result */
 			Node.Action nodeAction = (Node.Action) node;
 			Object val = evalPipeline(dot, nodeAction.pipe);
-			if (nodeAction.pipe.decl.size() == 0)
+			if (nodeAction.pipe.vars.size() == 0)
 				printValue(val);
 		} else if (node instanceof Node.If) {
 			Node.If nodeIf = (Node.If) node;
@@ -282,8 +300,8 @@ class Exec
 
 	private ForControl forIteration(Node.For f, Object elem, int startStackSize) throws ExecException
 	{
-		if (f.pipe.decl.size() == 1)
-			setVar(1, elem);
+		if (f.pipe.vars.size() == 1)
+			setTopVar(1, elem);
 		ForControl c = walk(elem, f.list);
 		pop(startStackSize);
 
@@ -321,8 +339,12 @@ class Exec
 		Object val = null;
 		for (Node.Command cmd : pipe.cmds)
 			val = evalCommand(dot, cmd, val);
-		for (Node.Variable var : pipe.decl)
-			push(var.ident.get(0), val);
+		for (Node.Assign var : pipe.vars) {
+			if (pipe.decl)
+				push(var.ident.get(0), val);
+			else
+				setVar(var.ident.get(0), val);
+		}
 
 		return val;
 	}
@@ -345,8 +367,8 @@ class Exec
 			 * inside the pipeline; finalValue is ignored
 			 */
 			return evalPipeline(dot, (Node.Pipe)firstWord);
-		else if (firstWord instanceof Node.Variable)
-			return evalVariableNode(dot, (Node.Variable)firstWord,
+		else if (firstWord instanceof Node.Assign)
+			return evalVariableNode(dot, (Node.Assign)firstWord,
 						cmd.args, finalVal);
 
 		at(firstWord);
@@ -404,8 +426,8 @@ class Exec
 			ArrayList<Node> args = new ArrayList<>();
 			args.add(node);
 			return evalFieldNode(dot, (Node.Field)node, args, null);
-		} else if (node instanceof Node.Variable){
-			return evalVariableNode(dot, (Node.Variable)node, null, null);
+		} else if (node instanceof Node.Assign){
+			return evalVariableNode(dot, (Node.Assign)node, null, null);
 		} else if (node instanceof Node.Pipe){
 			return evalPipeline(dot, (Node.Pipe)node);
 		} else if (node instanceof Node.Identifier){
@@ -555,7 +577,7 @@ class Exec
 		return result;
 	}
 
-	private Object evalVariableNode(Object dot, Node.Variable var,
+	private Object evalVariableNode(Object dot, Node.Assign var,
 					List<Node> args, Object finalVal) throws ExecException
 	{
 		/*

@@ -102,8 +102,8 @@ public class ParseTest
 		tests.add(new TestParse("$ invocation", "{{$}}", "{{$}}",
 					false));
 		tests.add(new TestParse("variable invocation",
-					"{{with $x = 3}}{{$x 123}}{{end}}",
-					"{{with $x = 3}}{{$x 123}}{{end}}",
+					"{{with $x := 3}}{{$x 123}}{{end}}",
+					"{{with $x := 3}}{{$x 123}}{{end}}",
 					false));
 		tests.add(new TestParse("variable with fields", "{{$.x}}",
 					"{{$.x}}", false));
@@ -112,8 +112,8 @@ public class ParseTest
 					"{{printf \"%d\" 123}}", false));
 		tests.add(new TestParse("pipeline", "{{.x|.y}}",
 					"{{.x | .y}}", false));
-		tests.add(new TestParse("pipeline with decl", "{{$x = .x|.y}}",
-					"{{$x = .x | .y}}", false));
+		tests.add(new TestParse("pipeline with decl", "{{$x := .x|.y}}",
+					"{{$x := .x | .y}}", false));
 		tests.add(new TestParse("nested pipeline",
 					"{{.x (.y .z) (.a | .b .c) (.e)}}",
 					"{{.x (.y .z) (.a | .b .c) (.e)}}",
@@ -153,8 +153,8 @@ public class ParseTest
 					"{{for .i}}{{.}}{{end}}",
 					"{{for .i}}{{.}}{{end}}", false));
 		tests.add(new TestParse("for var",
-					"{{for $x = .i}}{{.}}{{end}}",
-					"{{for $x = .i}}{{.}}{{end}}", false));
+					"{{for $x := .i}}{{.}}{{end}}",
+					"{{for $x := .i}}{{.}}{{end}}", false));
 		tests.add(new TestParse("for int[] with break",
 					"{{for .i}}{{break}}{{.}}{{end}}",
 					"{{for .i}}{{break}}{{.}}{{end}}",
@@ -198,11 +198,11 @@ public class ParseTest
 					"hello{{undefined}}", "", true));
 		tests.add(new TestParse("undefined variable", "{{$x}}", "", true));
 		tests.add(new TestParse("variable undefined after end",
-					"{{with $x = 1}}{{end}}{{$x}}", "", true));
+					"{{with $x := 1}}{{end}}{{$x}}", "", true));
 		tests.add(new TestParse("variable undefined in template",
 					"{{template $v}}", "", true));
 		tests.add(new TestParse("declare with field",
-					"{{with $x.y = 1}}{{end}}", "", true));
+					"{{with $x.y := 1}}{{end}}", "", true));
 		tests.add(new TestParse("template with field ref",
 					"{{template .x}}", "", true));
 		tests.add(new TestParse("template with var",
@@ -214,7 +214,7 @@ public class ParseTest
 		tests.add(new TestParse("adjacent args",
 					"{{printf 3`x`}}", "", true));
 		tests.add(new TestParse("multiple declaration",
-					"{{$x = $y = 1}}{{$x}}", "", true));
+					"{{$x := $y := 1}}{{$x}}", "", true));
 		tests.add(new TestParse("dot after integer", "{{1.e}}", "", true));
 		tests.add(new TestParse("dot after float", "{{0.1.e}}", "", true));
 		tests.add(new TestParse("dot after boolean", "{{true.e}}", "", true));

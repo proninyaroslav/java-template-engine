@@ -339,7 +339,11 @@ class Lexer implements Runnable
 		} else if (Utils.isSpace(c)) {
 			return State.lexSpace;
 		} else if (c == '=') {
-			emit(Token.Type.EQUALS);
+			emit(Token.Type.ASSIGN);
+		} else if (c == ':') {
+			if (next() != '=')
+				errorf("expected :=");
+			emit(Token.Type.DECLARE);
 		} else if (c == '|') {
 			emit(Token.Type.PIPE);
 		} else if (c == '"') {

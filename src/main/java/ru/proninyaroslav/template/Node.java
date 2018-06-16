@@ -142,13 +142,14 @@ abstract class Node
 	 */
 	public static class Pipe extends Node
 	{
-		ArrayList<Variable> decl;   /* variable declarations in lexical order */
-		ArrayList<Command> cmds;    /* the commands in lexical order */
+		ArrayList<Assign> vars;   /* variables in lexical order */
+		ArrayList<Command> cmds;  /* the commands in lexical order */
+		public boolean decl;	  /* the variables are being declared, not assigned */
 
-		public Pipe(Tree tree, int pos, java.util.List<Variable> decl)
+		public Pipe(Tree tree, int pos, java.util.List<Assign> vars)
 		{
 			super(tree, Type.PIPE, pos);
-			this.decl = new ArrayList<>(decl);
+			this.vars = new ArrayList<>(vars);
 			cmds = new ArrayList<>();
 		}
 
@@ -159,11 +160,11 @@ abstract class Node
 
 		public Pipe copyPipe()
 		{
-			ArrayList<Variable> copyDecl = new ArrayList<>();
-			for (Variable d : decl)
-				copyDecl.add((Variable)d.copy());
+			ArrayList<Assign> copyDecl = new ArrayList<>();
+			for (Assign d : vars)
+				copyDecl.add((Assign) d.copy());
 			Pipe pipe = new Pipe(tree, pos, copyDecl);
-			pipe.decl = new ArrayList<>(decl);
+			pipe.vars = new ArrayList<>(vars);
 			for (Command cmd : cmds)
 				pipe.append((Command)cmd.copy());
 
@@ -181,9 +182,9 @@ abstract class Node
 		{
 			StringBuilder sb = new StringBuilder("");
 
-			if (decl.size() == 1) {
-				sb.append(decl.get(0));
-				sb.append(" = ");
+			if (vars.size() == 1) {
+				sb.append(vars.get(0));
+				sb.append(" := ");
 			}
 
 			for (int i = 0; i < cmds.size(); i++) {
@@ -200,11 +201,11 @@ abstract class Node
 	 * Holds a list of variable names, possibly with chained field accesses.
 	 * The dollar sign is part of the (first) name
 	 */
-	public static class Variable extends Node
+	public static class Assign extends Node
 	{
 		public ArrayList<String> ident; /* variable name and fields in lexical order */
 
-		public Variable(Tree tree, int pos, java.util.List<String> ident)
+		public Assign(Tree tree, int pos, java.util.List<String> ident)
 		{
 			super(tree, Type.VARIABLE, pos);
 			this.ident = new ArrayList<>(ident);
@@ -213,7 +214,7 @@ abstract class Node
 		@Override
 		public Node copy()
 		{
-			return new Variable(tree, pos, new ArrayList<>(ident));
+			return new Assign(tree, pos, new ArrayList<>(ident));
 		}
 
 		@Override

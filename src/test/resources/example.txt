@@ -11,7 +11,9 @@ Dot: {{.}}
 
 Pipeline: {{"upper case" | upper}}
 
-Variable: {{$n = .chars.length}}{{$s = index .strings 0}}{{$n}}
+Declare variable: {{$n := .chars.length}}{{$s := index .strings 0}}{{$n}}
+
+Assign variable: {{$assign := "init"}}{{if true}}{{$assign = "changed"}}{{end}}{{$assign}}
 
 Foreach: {{for range 10}}{{.}} {{end}}
 
