@@ -28,7 +28,7 @@ Java >= **1.7**
 Documentation
 ---
 
-Coming soon
+See [documentation.md](documentation.md) file.
 
 License
 ---
