@@ -175,11 +175,11 @@ public class Template
 	}
 
 	/**
-	 * Create templates from the map, that represent pair (Name, InputStream)
+	 * Create templates from the map, that represent pair (Name, Text)
 	 * and append to this template
 	 *
 	 * @param funcs functions
-	 * @param text pair (Name, {@link InputStream})
+	 * @param text pair (Name, Text)
 	 * @throws ParseException in case of a parse error
 	 * @return template
 	 */
