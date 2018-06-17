@@ -6,7 +6,7 @@
 
     <groupId>ru.proninyaroslav</groupId>
     <artifactId>java-template-engine</artifactId>
-    <version>1.0</version>
+    <version>1.1</version>
     <packaging>jar</packaging>
     <name>Java Template Engine</name>
     <description>

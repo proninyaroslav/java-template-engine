@@ -1,3 +1,12 @@
+Version 1.1 (2018-06-17)
+========================
+
+ * Add variable assignments
+ * Fix javadoc
+
+IMPORTANT: since the "=" variable declaration token has been changed to ":=",
+there is no backwards compatibility with version 1.0.
+
 Version 1.0 (2018-06-13)
 ========================
 
