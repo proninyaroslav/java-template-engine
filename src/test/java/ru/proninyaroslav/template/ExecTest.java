@@ -71,6 +71,7 @@ public class ExecTest
 		public ByteArrayOutputStream stream = new ByteArrayOutputStream();
 		/* Private field; cannot be accessed by template */
 		private int priv;
+		public int sameName = 1;
 
 		private List<Integer> newIList()
 		{
@@ -140,6 +141,16 @@ public class ExecTest
 			t.tmpl.execute(t.stream, null);
 
 			return new String(t.stream.toByteArray());
+		}
+
+		public int sameName()
+		{
+			return 1;
+		}
+
+		public int sameName(int i)
+		{
+			return i;
 		}
 	}
 
@@ -370,6 +381,10 @@ public class ExecTest
 				       "", null, true));
 		tests.add(new TestExec("varargsFuncNullBad", "{{varargsFunc null}}",
 				       "", null, true));
+		tests.add(new TestExec("field and method with the same name", "{{.sameName}}",
+				       null, t, true));
+		tests.add(new TestExec("method with the same name as the field but with arguments", "{{.sameName 1}}",
+				       null, t, true));
 
 		ByteArrayOutputStream stream = new ByteArrayOutputStream();
 		FuncMap funcs = new FuncMap();

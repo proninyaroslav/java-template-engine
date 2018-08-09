@@ -467,7 +467,8 @@ class Exec
 	/**
 	 * Evaluates an expression like .field or .field arg1 arg2.
 	 * The finalVal argument represents the return value from the
-	 * preceding value of the pipeline
+	 * preceding value of the pipeline.
+	 * Field and method with one name are not allowed
 	 */
 	private Object evalField(Object dot, String fieldName, Node node,
 				 List<Node> args, Object finalVal, Object receiver) throws ExecException
@@ -477,33 +478,54 @@ class Exec
 			return null;
 		}
 
-		//TODO: shadowing
+		/* Special case of calling an array length field */
+		if (receiver.getClass().isArray() && fieldName.equals("length"))
+			return Array.getLength(receiver);
+
 		Method[] methods = receiver.getClass().getDeclaredMethods();
-		ArrayList<Method> found = new ArrayList<>();
+		Field field = null;
+		boolean hasArgs = args != null && (args.size() > 1 || finalVal != null);
+
+		/* Find methods */
+		ArrayList<Method> foundMethods = new ArrayList<>();
 		for (Method method : methods)
 			if (method.getName().equals(fieldName))
-				found.add(method);
-		if (found.size()!= 0)
-			return evalCall(dot, found, node, fieldName, args, finalVal, receiver);
+				foundMethods.add(method);
 
-		boolean hasArgs = args != null && (args.size()> 1 || finalVal != null);
+		/* Find field */
 		try {
-			if (receiver.getClass().isArray()&& fieldName.equals("length"))
-				return Array.getLength(receiver);
+			 field = receiver.getClass().getDeclaredField(fieldName);
+		} catch (NoSuchFieldException | SecurityException e) {
+			if (foundMethods.isEmpty())
+				errorf("can't evaluate field %s in class %s",
+					fieldName, receiver.getClass().getName());
+		}
 
-			Field field = receiver.getClass().getDeclaredField(fieldName);
-			if (field != null){
-				if (hasArgs){
-					errorf("%s has arguments but cannot be invoked as method", fieldName);
-					return null;
-				}
+		if (field != null && !foundMethods.isEmpty()) {
+			errorf("type %s has both field and method named %s",
+				receiver.getClass().toString(), fieldName);
+			return null;
+		}
 
-				return field.get(receiver);
+		if (!foundMethods.isEmpty()) {
+			return evalCall(dot, foundMethods, node, fieldName,
+					args, finalVal, receiver);
+
+		} else if (field != null) {
+			if (hasArgs){
+				errorf("%s has arguments but cannot be invoked as method", fieldName);
+				return null;
 			}
-		} catch (NoSuchFieldException | IllegalArgumentException e){
-			errorf("can't evaluate field %s in class %s", fieldName, receiver.getClass().getName());
-		} catch (IllegalAccessException e){
-			errorf("%s is a non-public field of class %s", fieldName, receiver.getClass().getName());
+			try {
+				return field.get(receiver);
+
+			} catch (IllegalAccessException e) {
+				errorf("%s is a non-public field of class %s",
+					fieldName, receiver.getClass().getName());
+			} catch (IllegalArgumentException e) {
+				errorf("can't evaluate field %s in class %s",
+					fieldName, receiver.getClass().getName());
+			}
 		}
 
 		return null;
