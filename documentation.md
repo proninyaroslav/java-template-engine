@@ -144,6 +144,7 @@ An argument is a simple value, denoted by one of the following:
     .field1.method1.field2.method2
   Methods can also be evaluated on variables, including chaining:
     $x.method1.field
+  Field and method with one name in the same class are not allowed.
 - The name of a function, such as
 	func
   The result is the value of invoking the function, func(). The return
