@@ -1,3 +1,8 @@
+Version 1.2 (2018-08-09)
+========================
+
+ * Disallow calling methods whose name matches the field
+
 Version 1.1 (2018-06-17)
 ========================
 

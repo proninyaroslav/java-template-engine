@@ -13,12 +13,12 @@ Download [the latest JAR](https://search.maven.org/remote_content?g=ru.proninyar
 <dependency>
   <groupId>ru.proninyaroslav</groupId>
   <artifactId>java-template-engine</artifactId>
-  <version>1.1</version>
+  <version>1.2</version>
 </dependency>
 ```
 or Gradle:
 ```groovy
-compile 'ru.proninyaroslav:java-template-engine:1.1'
+compile 'ru.proninyaroslav:java-template-engine:1.2'
 ```
 
 ### Requirements
