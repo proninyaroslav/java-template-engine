@@ -1,14 +1,14 @@
 Java Template Engine
 =====================
 
-[![Maven](https://img.shields.io/maven-central/v/ru.proninyaroslav/java-template-engine.svg)](https://maven-badges.herokuapp.com/maven-central/ru.proninyaroslav/java-template-engine) [![Javadocs](http://www.javadoc.io/badge/ru.proninyaroslav/java-template-engine.svg)](http://www.javadoc.io/doc/ru.proninyaroslav/java-template-engine)
+[![Maven](https://img.shields.io/maven-central/v/ru.proninyaroslav/java-template-engine.svg)](https://search.maven.org/artifact/ru.proninyaroslav/java-template-engine/1.2/jar) [![Javadocs](http://www.javadoc.io/badge/ru.proninyaroslav/java-template-engine.svg)](http://www.javadoc.io/doc/ru.proninyaroslav/java-template-engine)
 
 Golang-like template engine for Java. Implements data-driven templates for generating textual output.
 
 Usage
 ---
 
-Download [the latest JAR](https://search.maven.org/remote_content?g=ru.proninyaroslav&a=java-template-engine&v=LATEST) or get the dependency via Maven:
+Download [the latest JAR](https://search.maven.org/classic/remote_content?g=ru.proninyaroslav&a=java-template-engine&v=LATEST) or get the dependency via Maven:
 ```xml
 <dependency>
   <groupId>ru.proninyaroslav</groupId>
