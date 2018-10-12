@@ -12,7 +12,7 @@
     <description>
         Golang-like template engine for Java. Implements data-driven templates for generating textual output.
     </description>
-    <url>https://gitlab.com/proninyaroslav/java-template-engine</url>
+    <url>https://github.com/proninyaroslav/java-template-engine</url>
 
     <licenses>
         <license>
@@ -23,9 +23,9 @@
     </licenses>
 
     <scm>
-        <connection>scm:git:git@gitlab.com:proninyaroslav/java-template-engine.git</connection>
-        <developerConnection>scm:git:git@gitlab.com:proninyaroslav/java-template-engine.git</developerConnection>
-        <url>git@gitlab.com:proninyaroslav/java-template-engine.git</url>
+        <connection>scm:git:git@github.com:proninyaroslav/java-template-engine.git</connection>
+        <developerConnection>scm:git:git@gitlhub.com:proninyaroslav/java-template-engine.git</developerConnection>
+        <url>git@github.com:proninyaroslav/java-template-engine.git</url>
         <tag>HEAD</tag>
     </scm>
 
@@ -173,7 +173,7 @@
             <id>proninyaroslav</id>
             <name>Yaroslav Pronin</name>
             <email>proninyaroslav@mail.ru</email>
-            <url>https://gitlab.com/proninyaroslav/</url>
+            <url>https://github.com/proninyaroslav/</url>
         </developer>
     </developers>
 </project>
